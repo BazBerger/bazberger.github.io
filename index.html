@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sebastian Berger</title>
+<meta name="description" content="Sebastian Berger — computational biophysicist, UCL. Multiscale simulation from QM/MM to coarse-grained MD, and privacy by engineered noise.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+/* Layout: sticky identity column left, single reading column right; collapses to one column on phones. A strip of Brownian particles sits under the name: the noise left in. */
+:root{
+  --bg:#f5f6f7; --surface:#ffffff; --fg:#14181d; --muted:#5a636e; --rule:#dde1e6;
+  --accent:#1f47b5; --signal:#a8700f;
+  --display:"Spectral",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101318; --surface:#161a21; --fg:#e7eaee; --muted:#9aa3ae; --rule:#262c35;
+  --accent:#93b1ff; --signal:#e0aa4a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101318; --surface:#161a21; --fg:#e7eaee; --muted:#9aa3ae; --rule:#262c35;
+  --accent:#93b1ff; --signal:#e0aa4a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:320px minmax(0,1fr);gap:72px;padding-block:72px 96px}
+aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 48px);align-self:start;display:flex;flex-direction:column;gap:20px}
+h1{font-family:var(--display);font-weight:400;font-size:2.75rem;line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.role{color:var(--muted);margin:0;font-size:.95rem}
+#noise{width:100%;height:96px;display:block;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cap{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em;margin:-12px 0 0}
+.links{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.93rem}
+.links span{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:inline-block;width:72px}
+.copy{font:inherit;font-family:var(--mono);font-size:.72rem;background:none;border:1px solid var(--rule);color:var(--muted);border-radius:4px;padding:1px 7px;margin-left:6px;cursor:pointer}
+.copy:hover{color:var(--fg);border-color:var(--muted)}
+
+main{display:flex;flex-direction:column;gap:72px;min-width:0}
+section{display:flex;flex-direction:column;gap:20px}
+.eyebrow{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--signal);margin:0}
+h2{font-family:var(--display);font-weight:400;font-size:1.9rem;line-height:1.2;margin:0;text-wrap:balance;max-width:28ch}
+h3{font-family:var(--body);font-weight:600;font-size:1.02rem;margin:0}
+p{margin:0;max-width:66ch}
+.lede{font-family:var(--display);font-size:1.35rem;line-height:1.5;max-width:34ch}
+.lede em{color:var(--accent);font-style:italic}
+
+/* scale ladder */
+.ladder{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.rung{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;padding:22px 0;border-bottom:1px solid var(--rule)}
+.rung .scale{font-family:var(--mono);font-size:.78rem;color:var(--muted);line-height:1.5;display:flex;flex-direction:column;gap:2px}
+.rung .scale b{font-weight:500;color:var(--fg)}
+.rung .body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tags li{list-style:none;font-family:var(--mono);font-size:.72rem;color:var(--muted);border:1px solid var(--rule);border-radius:3px;padding:1px 7px}
+.tags{padding:0}
+
+/* current project */
+.current{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:32px;display:flex;flex-direction:column;gap:18px}
+.questions{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;max-width:64ch}
+.questions li::marker{color:var(--signal)}
+.meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.tl-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--rule)}
+.tl-row time{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.tl-row .body{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tl-row .where{color:var(--muted);font-size:.93rem}
+.tl-row p{font-size:.95rem}
+
+.collabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 32px;padding:0;margin:0;list-style:none}
+.collabs li{display:flex;flex-direction:column;gap:2px;font-size:.95rem}
+.collabs .who{font-weight:500}
+.collabs .what{color:var(--muted)}
+
+.skills{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px 24px;margin:0}
+.skills dt{font-family:var(--mono);font-size:.78rem;color:var(--muted);padding-top:2px}
+.skills dd{margin:0}
+
+footer{grid-column:1/-1;border-top:1px solid var(--rule);padding-top:20px;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:48px;padding-block:40px 64px}
+  aside{position:static}
+  h1{font-size:2.3rem}
+}
+@media (max-width:560px){
+  .rung,.tl-row,.skills{grid-template-columns:minmax(0,1fr);gap:6px}
+  .collabs{grid-template-columns:minmax(0,1fr)}
+  .current{padding:22px}
+  h2{font-size:1.6rem}
+  .lede{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <aside>
+    <h1>Sebastian Berger</h1>
+    <p class="role">Computational biophysicist · PhD candidate, University College London</p>
+    <canvas id="noise" aria-label="Animated field of particles in Brownian motion" role="img"></canvas>
+    <p class="cap">brownian motion, k<sub>B</sub>T left in</p>
+    <ul class="links">
+      <li><span>Email</span><span style="width:auto;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:.93rem;color:var(--fg)" id="email">sebastian.berger@ucl.ac.uk</span><button class="copy" id="copyEmail" type="button">copy</button></li>
+      <li><span>ORCID</span><a href="https://orcid.org/0009-0007-8086-3293">0009-0007-8086-3293</a></li>
+      <li><span>LinkedIn</span><a href="https://www.linkedin.com/in/sebastiangsberger">sebastiangsberger</a></li>
+      <li><span>Group</span><a href="https://www.ucl.ac.uk/physics-astronomy/">Rosta Lab, UCL Physics &amp; Astronomy</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <section id="about">
+      <p class="eyebrow">About</p>
+      <p class="lede">I model biological matter at whatever scale the question needs, with the <em>noise left in</em>.</p>
+      <p>What first drew me to biology was an animation of kinesin walking along a microtubule. It was beautiful and it left something out. There was no water, no crowding, nothing knocking the motor off course. Real cytoplasm is dense, and everything in it is struck from every direction all the time. Molecular machines don't work despite that thermal noise. They work through it.</p>
+      <p>My research puts that noise back. I use quantum mechanics when the question is about electrons, such as how a drug forms a covalent bond with its target, and coarse-grained molecular dynamics when I need microseconds, such as how disordered regions of transcription factors help decide whether a cell becomes a heart cell or a neuron. I'm in the writing-up stage of my PhD at UCL and am building towards a biotech spin-out.</p>
+    </section>
+
+    <section id="research">
+      <p class="eyebrow">Research, by scale</p>
+      <h2>From bond-breaking to condensates</h2>
+      <div class="ladder">
+        <div class="rung">
+          <div class="scale"><b>QM/MM</b><span>electrons</span><span>fs – ps</span></div>
+          <div class="body">
+            <h3>Cysteine reactivity and covalent inhibitor design</h3>
+            <p>Covalent inhibition accounts for around 30% of marketed drugs, and cysteine is one of the most common targets. My PhD develops methods to determine how reactive a given cysteine is from its local protein environment, combining established and new pKa prediction methods with QM/MM simulations of known covalent inhibitors. The aim is to identify cysteines suited to covalent targeting, then understand how inhibitor design modulates that reactivity, for example in Michael addition warheads.</p>
+            <ul class="tags"><li>QM/MM</li><li>constant-pH MD</li><li>pKa prediction</li><li>FEP</li><li>reaction pathways</li></ul>
+          </div>
+        </div>
+        <div class="rung">
+          <div class="scale"><b>Coarse-grained MD</b><span>residues &amp; chromatin</span><span>µs and beyond</span></div>
+          <div class="body">
+            <h3>Transcription factor IDRs and condensates</h3>
+            <p>Intrinsically disordered regions let transcription factors form condensates on chromatin. In my MPhil at the Cambridge Stem Cell Institute I built a model of NANOG–chromatin interaction dynamics, covering both homotypic and heterotypic interactions, to study how NANOG condensates drive long-range chromatin contacts during the acquisition and loss of naïve pluripotency. The model was informed by Hi-C, ChIP-seq and live single-molecule localisation microscopy. I continue this work on IDRs, condensates and post-translational modification kinetics.</p>
+            <ul class="tags"><li>Martini 3 / Martini3-IDP</li><li>GROMACS</li><li>IDRs</li><li>phase separation</li><li>phosphorylation</li><li>Hi-C</li></ul>
+          </div>
+        </div>
+        <div class="rung">
+          <div class="scale"><b>Image analysis</b><span>cells &amp; tissue</span><span>whole bone</span></div>
+          <div class="body">
+            <h3>Finding cells in the bone marrow niche</h3>
+            <p>For my undergraduate project at Imperial I developed a HOG + SVM detector that automatically locates fluorescent megakaryocytes in near-whole immunolabelled mouse sternum, the stem-cell niche of the bone marrow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="now">
+      <p class="eyebrow">Now · Green Room Campus, Ireland · Q4 2026</p>
+      <div class="current">
+        <h2>Privacy by noise: when deletion is no longer an option</h2>
+        <p>Most consumer privacy tools assume data can be controlled: opt out, request erasure, delete the account. That stops working once a record has been copied, indexed, embedded and trained on. It matters most for biological data. You can change a password or a phone number, but you can't change your genome. When 23andMe went bankrupt in 2025, the genetic data of more than fifteen million people was sold as the main asset, two years after a breach had already exposed millions of users. Deleting your account afterwards does nothing about the copies.</p>
+        <p>For ten weeks I'm testing the opposite approach: lowering an adversary's confidence in what they hold by adding plausible decoys. For biographical data, the questions are empirical:</p>
+        <ul class="questions">
+          <li>Which kinds of decoy work, and how much decoy volume is needed as the number of corroborating sources grows?</li>
+          <li>How does an adversary's confidence change as corroborating sources accumulate?</li>
+          <li>Can LLM-generated decoy records be told apart from real ones, and can they survive data-poisoning defences?</li>
+        </ul>
+        <p>Genomic data is harder and more interesting. You can't fake a haplotype by flipping variants at random, because it fails phasing, linkage-disequilibrium decay and reference-panel checks. But the structure that makes decoys hard also makes the adversary's knowledge computable. Decoy generation becomes a constrained sampling problem on a manifold set by recombination, so decoys can go where they buy the most uncertainty per unit of budget. Because relatives expose each other, protection may have to be defined over a family or cohort, and I want to find that bound.</p>
+        <p>The real risk is cost. If the noise needed grows faster than linearly with the number of sources, this is a personal project rather than a scalable technology. Ten weeks is enough to find out either way.</p>
+        <p class="meta">Residency: <a href="https://joingreenroom.com">Green Room Campus</a></p>
+      </div>
+    </section>
+
+    <section id="cv">
+      <p class="eyebrow">Education &amp; experience</p>
+      <div class="tl">
+        <div class="tl-row"><time>2022 – now</time><div class="body"><h3>PhD, Computational Biophysics</h3><span class="where">University College London · Prof. Edina Rosta, Physics &amp; Astronomy</span><p>Method development for determining cysteine reactivity in protein structures. Industry co-supervision with AstraZeneca.</p></div></div>
+        <div class="tl-row"><time>2021 – 2022</time><div class="body"><h3>MPhil, Biological Sciences (Stem Cells)</h3><span class="where">University of Cambridge · Dr Srinjan Basu, Cambridge Stem Cell Institute</span><p>Acquisition and loss of naïve pluripotency in pre-implantation mouse embryonic stem cells. Graduated in the top three of the year.</p></div></div>
+        <div class="tl-row"><time>2018 – 2021</time><div class="body"><h3>BSc, Biological Sciences</h3><span class="where">Imperial College London · Prof. Cristina Lo Celso</span><p>Upper second. Final-year project on machine-learning detection of cell types in whole-bone samples (71%). Additional courses in corporate finance and accounting at Imperial College Business School.</p></div></div>
+      </div>
+    </section>
+
+    <section id="collaborators">
+      <p class="eyebrow">Collaborations</p>
+      <ul class="collabs">
+        <li><span class="who">Dr Juan Carlos Mobarec</span><span class="what">AstraZeneca · industry co-supervisor</span></li>
+        <li><span class="who">Prof. Jana Shen</span><span class="what">University of Maryland · constant-pH MD of cysteines for pKa prediction</span></li>
+        <li><span class="who">Dr Srinjan Basu</span><span class="what">Imperial College London · multiscale modelling of post-modification kinetics</span></li>
+        <li><span class="who">Dr Helen Ray Jones</span><span class="what">VIB, University of Antwerp · Foreseen, a 4C-seq design web tool</span></li>
+      </ul>
+    </section>
+
+    <section id="tools">
+      <p class="eyebrow">Methods &amp; tools</p>
+      <dl class="skills">
+        <dt>Methods</dt><dd>QM/MM, molecular dynamics (all-atom and coarse-grained), free energy perturbation, constant-pH simulation, machine learning</dd>
+        <dt>All-atom &amp; QM</dt><dd>CHARMM, NAMD, Q-Chem, Schrödinger, CHARMM-GUI</dd>
+        <dt>Coarse-grained</dt><dd>GROMACS (GPU), Martini 3 and Martini3-IDP force fields, martinize2, insane; multi-chain condensate simulations of transcription factor IDRs</dd>
+        <dt>Analysis</dt><dd>Python, MDAnalysis, MDTraj, R, MATLAB, Bash</dd>
+        <dt>Compute</dt><dd>JADE2 GPU allocation: 33,098 GPU hours</dd>
+      </dl>
+    </section>
+
+    <section id="elsewhere">
+      <p class="eyebrow">Away from the screen</p>
+      <p>In 2018 I walked the Via Francigena from Canterbury to Rome, over 2,000 km in 82 days, mostly alone. I picked it over the Camino because it had a hundredth of the pilgrims and, across much of France, barely any waymarking. I've also climbed Kilimanjaro, sang Grade 8 and in the Girton College Chapel Choir, and grow vegetables at home. Asparagus taught me patience: nothing for two years, a token cut in the third.</p>
+    </section>
+  </main>
+
+  <footer>Sebastian Berger · London · Publications on <a href="https://orcid.org/0009-0007-8086-3293">ORCID</a></footer>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyEmail'), el=document.getElementById('email');
+  btn.addEventListener('click',function(){
+    var t=el.textContent;
+    function sel(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='selected';}
+    try{navigator.clipboard.writeText(t).then(function(){btn.textContent='copied';setTimeout(function(){btn.textContent='copy'},1600)},sel)}catch(e){sel()}
+  });
+
+  var c=document.getElementById('noise'), ctx=c.getContext('2d');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var P=[], W=0, H=0, dpr=Math.min(window.devicePixelRatio||1,2), walker;
+  function col(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  function size(){
+    var r=c.getBoundingClientRect(); W=r.width; H=r.height;
+    c.width=W*dpr; c.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    var n=Math.round(W*H/90); P=[];
+    for(var i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H});
+    walker={x:8,y:H/2};
+  }
+  function step(){
+    var s=1.1;
+    for(var i=0;i<P.length;i++){var p=P[i];
+      p.x+= (Math.random()+Math.random()-1)*s; p.y+=(Math.random()+Math.random()-1)*s;
+      if(p.x<0)p.x+=W; if(p.x>W)p.x-=W; if(p.y<0)p.y=-p.y; if(p.y>H)p.y=2*H-p.y;}
+    // a biased walker: drifts right, jostled by the bath
+    walker.x+=0.25+(Math.random()-0.5)*2.2; walker.y+=(Math.random()-0.5)*1.6;
+    walker.y=Math.max(10,Math.min(H-10,walker.y)); if(walker.x>W+6){walker.x=-6}
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=col('--muted'); ctx.globalAlpha=.55;
+    for(var i=0;i<P.length;i++){ctx.fillRect(P[i].x,P[i].y,1.4,1.4)}
+    ctx.globalAlpha=1; ctx.fillStyle=col('--signal');
+    ctx.beginPath(); ctx.arc(walker.x,walker.y,3.2,0,Math.PI*2); ctx.fill();
+  }
+  function loop(){step();draw();requestAnimationFrame(loop)}
+  size();
+  for(var k=0;k<200;k++)step();
+  draw();
+  if(!reduce)requestAnimationFrame(loop);
+  var t; addEventListener('resize',function(){clearTimeout(t);t=setTimeout(function(){size();draw()},150)});
+})();
+</script>
+</body>
+</html>
